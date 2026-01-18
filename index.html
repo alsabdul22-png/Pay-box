@@ -1,3 +1,31 @@
+    <!-- Modal für Einstellungen -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content settings-content">
+            <h2>Einstellungen</h2>
+            <div class="settings-section">
+                <h3>Designer / Entwickler</h3>
+                <p>Abdulrahman Alshouly</p>
+            </div>
+            <div class="settings-section">
+                <h3>Nutzungsbedingungen</h3>
+                <p>Die Nutzung dieser App erfolgt auf eigene Verantwortung. Die App dient als Kassenlösung für kleine Unternehmen und Einzelhändler. Keine Haftung für Datenverluste oder Fehlbedienung.</p>
+            </div>
+            <div class="settings-section">
+                <h3>Beschreibung / Idee</h3>
+                <p>PayBox ist eine moderne Kassen-App zur einfachen Verwaltung von Verkäufen, Produkten und Tagesabschlüssen. Ziel ist eine intuitive, mehrsprachige und flexible Lösung für den Point-of-Sale.</p>
+            </div>
+            <div class="settings-section">
+                <h3>Weitere Einstellungen</h3>
+                <ul>
+                    <li><label><input type="checkbox" id="darkModeToggle"> Dunkler Modus</label></li>
+                    <li><label><input type="checkbox" id="soundToggle"> Töne aktivieren</label></li>
+                    <li><label><input type="checkbox" id="notificationsToggle"> Benachrichtigungen</label></li>
+                    <li><button onclick="resetApp()">App zurücksetzen</button></li>
+                </ul>
+            </div>
+            <button class="btn-close" onclick="closeSettings()">Schließen</button>
+        </div>
+    </div>
 <!DOCTYPE html>
 <html lang="de">
 <head>
@@ -9,78 +37,76 @@
 </head>
 <body>
     <!-- Login/Signup entfernt -->
-
-    <!-- Main Application -->
-    <div id="mainApp" class="main-app">
-        <div class="container">
+    <div class="main-area">
         <div class="header">
-            <div class="header-top">
-                <div class="logo-container">
+            <div class="header-row">
+                <div class="logo-title">
                     <div class="logo">💳</div>
                     <h1 data-i18n="appName">PayBox</h1>
                 </div>
-                <div class="header-controls">
-                    <button class="btn-daily-closing" onclick="openDailyClosing()" data-i18n="dailyClosing">Tagesabschluss</button>
-                    <button class="btn-user-select" id="currentUserBtn" onclick="openUserSelection()">👤 Benutzer</button>
-                    <div class="language-selector">
-                        <select id="languageSelect" onchange="changeLanguage(this.value)">
-                            <option value="de">🇩🇪 Deutsch</option>
-                            <option value="en">🇬🇧 English</option>
-                            <option value="ar">🇸🇦 العربية</option>
-                        </select>
+                <div class="header-actions">
+                    <button onclick="openSettings()">⚙️</button>
+                    <div class="language-dropdown">
+                        <button class="lang-btn" onclick="toggleLanguageDropdown(event)">🌐</button>
+                        <div class="language-list" id="languageList">
+                            <button onclick="changeLanguage('de')">🇩🇪 Deutsch</button>
+                            <button onclick="changeLanguage('en')">🇬🇧 English</button>
+                            <button onclick="changeLanguage('ar')">🇸🇦 العربية</button>
+                            <button onclick="changeLanguage('fr')">🇫🇷 Français</button>
+                            <button onclick="changeLanguage('es')">🇪🇸 Español</button>
+                            <button onclick="changeLanguage('tr')">🇹🇷 Türkçe</button>
+                            <button onclick="changeLanguage('ru')">🇷🇺 Русский</button>
+                            <button onclick="changeLanguage('it')">🇮🇹 Italiano</button>
+                        </div>
                     </div>
+                    <button onclick="openAddProduct()">➕</button>
+                    <button onclick="openDailyClosing()" style="background:#001f3f;color:#7fdbff;font-size:1.1em;font-weight:600;">📊 <span data-i18n="dailyClosing">Tagesabschluss</span></button>
                 </div>
             </div>
             <p class="time" id="time"></p>
         </div>
-
         <div class="main-content">
-            <!-- Linke Seite: Produkte -->
-            <div class="products-section">
-                <h2 data-i18n="articles">Artikel</h2>
-                
-                <div class="barcode-scanner">
-                    <h3>📱 Barcode Scan</h3>
-                    <input type="text" id="barcodeInput" placeholder="Barcode einscannen..." onkeypress="handleBarcodeInput(event)">
-                    <p class="scanner-hint" data-i18n="scanHint">Barcode einscannen oder manuell eingeben</p>
-                </div>
-                
-                <!-- Kategorien-Auswahl -->
-                <div class="categories-bar">
-                    <select id="categorySelect" onchange="filterByCategory(this.value)"></select>
-                </div>
-                
-                <!-- Professionelle Beschreibung für Kategorienfunktion -->
-                <div class="category-info" id="categoryInfo" style="margin-bottom:10px;color:#00d4ff;font-weight:500;">
-                    <!-- Text wird per JS gesetzt -->
-                </div>
-                
-                <div class="products-grid" id="productsGrid"></div>
-                
-                <div class="add-product">
-                    <h3 data-i18n="newArticle">Neuer Artikel</h3>
-                    <input type="text" id="productName" placeholder="Artikelname">
-                    <input type="number" id="productPrice" placeholder="Preis" step="0.01" min="0">
-                    <input type="text" id="productBarcode" placeholder="Barcode (optional)">
-                    <select id="productCategory">
-                        <option value="food">Lebensmittel</option>
-                        <option value="cheese_meat">Käse & Fleisch</option>
-                        <option value="vegetables">Gemüse</option>
-                        <option value="drinks">Getränke</option>
-                        <option value="sweets">Süßwaren</option>
-                        <option value="other">Sonstiges</option>
-                    </select>
-                    
-                    <div class="image-upload-section">
-                        <label for="productImage" class="image-upload-label">
-                            <span id="imagePreviewSmall" class="image-icon">🖼️</span>
-                            <span id="imageText" data-i18n="selectImage">Bild auswählen</span>
-                        </label>
-                        <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
-                        <img id="imagePreview" class="image-preview" alt="Bildvorschau">
+                <div class="products-section">
+                    <h2 data-i18n="articles">Artikel</h2>
+                    <div class="barcode-scanner">
+                        <h3>📱 Barcode Scan</h3>
+                        <input type="text" id="barcodeInput" placeholder="Barcode einscannen..." onkeypress="handleBarcodeInput(event)">
+                        <p class="scanner-hint" data-i18n="scanHint">Barcode einscannen oder manuell eingeben</p>
                     </div>
-                    
-                    <button onclick="addProduct()" data-i18n="addButton">+ Hinzufügen</button>
+                    <div class="categories-bar">
+                        <select id="categorySelect" onchange="filterByCategory(this.value)"></select>
+                    </div>
+                    <div class="category-info" id="categoryInfo" style="margin-bottom:10px;color:#00d4ff;font-weight:500;"></div>
+                    <div class="products-grid" id="productsGrid"></div>
+                    <!-- Das Formular für neuen Artikel ist jetzt im Modal -->
+                <!-- Modal für neues Produkt -->
+                <div id="addProductModal" class="modal">
+                    <div class="modal-content">
+                        <h2 data-i18n="newArticle">Neues Produkt hinzufügen</h2>
+                        <div class="add-product">
+                            <input type="text" id="productName" placeholder="Artikelname">
+                            <input type="number" id="productPrice" placeholder="Preis" step="0.01" min="0">
+                            <input type="text" id="productBarcode" placeholder="Barcode (optional)">
+                            <select id="productCategory">
+                                <option value="food">Lebensmittel</option>
+                                <option value="cheese_meat">Käse & Fleisch</option>
+                                <option value="vegetables">Gemüse</option>
+                                <option value="drinks">Getränke</option>
+                                <option value="sweets">Süßwaren</option>
+                                <option value="other">Sonstiges</option>
+                            </select>
+                            <div class="image-upload-section">
+                                <label for="productImage" class="image-upload-label">
+                                    <span id="imagePreviewSmall" class="image-icon">🖼️</span>
+                                    <span id="imageText" data-i18n="selectImage">Bild auswählen</span>
+                                </label>
+                                <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
+                                <img id="imagePreview" class="image-preview" alt="Bildvorschau">
+                            </div>
+                            <button onclick="addProduct();closeAddProductModal()" data-i18n="addButton">+ Hinzufügen</button>
+                            <button class="btn-close" onclick="closeAddProductModal()">Abbrechen</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 

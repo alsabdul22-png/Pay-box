@@ -1,4 +1,202 @@
+    // --- Benutzerverwaltung und Tagesabschluss ---
+    const users = ['Ahmed', 'Aboud', 'Jawad'];
+    let currentUser = null;
+    let salesData = JSON.parse(localStorage.getItem('salesData') || '{}');
+
+    function selectUser(user) {
+        currentUser = user;
+        localStorage.setItem('currentUser', user);
+        document.getElementById('userSelectionModal').classList.remove('show');
+        updateUserButton();
+    }
+
+    function updateUserButton() {
+        // Optional: Benutzername im UI anzeigen
+        // z.B. in der Header-Leiste
+        // document.getElementById('currentUserBtn').textContent = currentUser;
+    }
+
+    function recordSale(total, customerCount=1) {
+        if (!currentUser) return;
+        if (!salesData[currentUser]) {
+            salesData[currentUser] = { totalSales: 0, customersCount: 0 };
+        }
+        salesData[currentUser].totalSales += total;
+        salesData[currentUser].customersCount += customerCount;
+        localStorage.setItem('salesData', JSON.stringify(salesData));
+    }
+
+    function openDailyClosing() {
+        // Zeige Modal
+        document.getElementById('dailyClosingModal').classList.add('show');
+        renderDailyClosing();
+    }
+
+    function closeDailyClosing() {
+        document.getElementById('dailyClosingModal').classList.remove('show');
+    }
+
+    function renderDailyClosing() {
+        const t = translations[currentLanguage];
+        let html = '';
+        if (currentUser && salesData[currentUser]) {
+            html += `<div><strong>${currentUser}</strong></div>`;
+            html += `<div>${t.totalSales}: <span style="color:#0074d9;font-weight:bold;">€ ${salesData[currentUser].totalSales.toFixed(2)}</span></div>`;
+            html += `<div>${t.customersCount}: <span style="color:#0074d9;font-weight:bold;">${salesData[currentUser].customersCount}</span></div>`;
+        } else {
+            html += `<div>${t.noPurchases}</div>`;
+        }
+        document.getElementById('dailyClosingContent').innerHTML = html;
+    }
+
+    function resetDailySales() {
+        if (currentUser && salesData[currentUser]) {
+            salesData[currentUser] = { totalSales: 0, customersCount: 0 };
+            localStorage.setItem('salesData', JSON.stringify(salesData));
+        }
+    }
+    // Einstellungen öffnen/schließen
+    function openSettings() {
+        document.getElementById('settingsModal').classList.add('show');
+    }
+    function closeSettings() {
+        document.getElementById('settingsModal').classList.remove('show');
+    }
+    function resetApp() {
+        if(confirm('App wirklich zurücksetzen? Alle Daten gehen verloren!')) {
+            localStorage.clear();
+            location.reload();
+        }
+    }
+const translations = {
+    fr: {
+        appName: 'PayBox',
+        articles: 'Articles',
+        newArticle: 'Nouvel article',
+        selectImage: 'Sélectionner une image',
+        addButton: '+ Ajouter',
+        login: 'Connexion',
+        loginButton: 'Connexion',
+        userPlaceholder: 'Utilisateur',
+        passwordPlaceholder: 'Mot de passe',
+        loginError: 'Identifiants invalides',
+        cart: 'Panier',
+        emptyCart: 'Le panier est vide',
+        total: 'Total :',
+        cancel: 'Annuler',
+        cash: '💵 Espèces',
+        card: '💳 Carte',
+        openCash: '🔓 Ouvrir la caisse',
+        receiptQuestion: 'Reçu ?',
+        receiptAsk: 'Voulez-vous un reçu ?',
+        yes: '✓ Oui, imprimer',
+        no: '✕ Non',
+        paymentMethod: 'Mode de paiement',
+        completed: 'Paiement effectué',
+        scanHint: 'Scannez le code-barres ou saisissez-le manuellement',
+        categoryInfo: 'Le système prend désormais en charge la catégorisation professionnelle des produits...',
+        selectUser: 'Sélectionner un utilisateur',
+        selectUserHint: 'Choisissez un utilisateur pour la transaction',
+        dailyClosing: 'Clôture du jour',
+        dailyClosingReport: 'Rapport de clôture',
+        totalSales: 'Ventes totales',
+        customersCount: 'Nombre de clients',
+        noPurchases: 'Aucune vente',
+        dailyClosingSummary: 'Résumé de la clôture du jour'
+    },
+    ru: {
+        appName: 'PayBox',
+        articles: 'Товары',
+        newArticle: 'Новый товар',
+        selectImage: 'Выбрать изображение',
+        addButton: '+ Добавить',
+        login: 'Войти',
+        loginButton: 'Войти',
+        userPlaceholder: 'Пользователь',
+        passwordPlaceholder: 'Пароль',
+        loginError: 'Неверные данные',
+        cart: 'Корзина',
+        emptyCart: 'Корзина пуста',
+        total: 'Итого:',
+        cancel: 'Отмена',
+        cash: '💵 Наличные',
+        card: '💳 Карта',
+        openCash: '🔓 Открыть кассу',
+        receiptQuestion: 'Чек?',
+        receiptAsk: 'Хотите чек?',
+        yes: '✓ Да, печать',
+        no: '✕ Нет',
+        paymentMethod: 'Способ оплаты',
+        completed: 'Оплата завершена',
+        scanHint: 'Отсканируйте штрихкод или введите вручную',
+        categoryInfo: 'Система теперь поддерживает профессиональную категоризацию товаров...',
+        selectUser: 'Выбрать пользователя',
+        selectUserHint: 'Выберите пользователя для операции',
+        dailyClosing: 'Закрытие дня',
+        dailyClosingReport: 'Отчет о закрытии дня',
+        totalSales: 'Общий объем продаж',
+        customersCount: 'Количество клиентов',
+        noPurchases: 'Нет продаж',
+        dailyClosingSummary: 'Сводка закрытия дня'
+    },
+    it: {
+        appName: 'PayBox',
+        articles: 'Articoli',
+        newArticle: 'Nuovo articolo',
+        selectImage: 'Seleziona immagine',
+        addButton: '+ Aggiungi',
+        login: 'Accedi',
+        loginButton: 'Accedi',
+        userPlaceholder: 'Utente',
+        passwordPlaceholder: 'Password',
+        loginError: 'Credenziali non valide',
+        cart: 'Carrello',
+        emptyCart: 'Il carrello è vuoto',
+        total: 'Totale:',
+        cancel: 'Annulla',
+        cash: '💵 Contanti',
+        card: '💳 Carta',
+        openCash: '🔓 Apri cassa',
+        receiptQuestion: 'Ricevuta?',
+        receiptAsk: 'Vuoi una ricevuta?',
+        yes: '✓ Sì, stampa',
+        no: '✕ No',
+        paymentMethod: 'Metodo di pagamento',
+        completed: 'Pagamento completato',
+        scanHint: 'Scansiona il codice a barre o inseriscilo manualmente',
+        categoryInfo: 'Il sistema ora supporta la categorizzazione professionale dei prodotti...',
+        selectUser: 'Seleziona utente',
+        selectUserHint: 'Scegli un utente per la transazione',
+        dailyClosing: 'Chiusura giornaliera',
+        dailyClosingReport: 'Rapporto di chiusura',
+        totalSales: 'Vendite totali',
+        customersCount: 'Numero clienti',
+        noPurchases: 'Nessuna vendita',
+        dailyClosingSummary: 'Riepilogo chiusura giornaliera'
+    }
+};
+// Sprach-Dropdown öffnen/schließen
+function toggleLanguageDropdown(event) {
+    event.stopPropagation();
+    const dropdown = event.currentTarget.closest('.language-dropdown');
+    dropdown.classList.toggle('open');
+}
+
+// Sprach-Dropdown schließen, wenn außerhalb geklickt wird
+document.addEventListener('click', function(e) {
+    document.querySelectorAll('.language-dropdown.open').forEach(el => el.classList.remove('open'));
+});
+// Öffnet das Modal für neues Produkt
+function openAddProduct() {
+    document.getElementById('addProductModal').classList.add('show');
+}
+
+// Schließt das Modal für neues Produkt
+function closeAddProductModal() {
+    document.getElementById('addProductModal').classList.remove('show');
+}
 // Produkt-Kategorien
+
 const PRODUCT_CATEGORIES = [
     { key: 'food', label: 'Lebensmittel' },
     { key: 'cheese_meat', label: 'Käse & Fleisch' },
@@ -7,115 +205,6 @@ const PRODUCT_CATEGORIES = [
     { key: 'sweets', label: 'Süßwaren' },
     { key: 'other', label: 'Sonstiges' }
 ];
-// Login/Signup entfernt
-// Mehrsprachige Texte (i18n)
-const translations = {
-    de: {
-        appName: 'PayBox',
-        articles: 'Artikel',
-        newArticle: 'Neuer Artikel',
-        selectImage: 'Bild auswählen',
-        addButton: '+ Hinzufügen',
-        login: 'Anmelden',
-        loginButton: 'Anmelden',
-        userPlaceholder: 'Benutzer',
-        passwordPlaceholder: 'Passwort',
-        loginError: 'Ungültige Anmeldedaten',
-        cart: 'Warenkorb',
-        emptyCart: 'Warenkorb ist leer',
-        total: 'Gesamt:',
-        cancel: 'Abbrechen',
-        cash: '💵 Bargeld',
-        card: '💳 Karte',
-        openCash: '🔓 Kasse Öffnen',
-        receiptQuestion: 'Quittung?',
-        receiptAsk: 'Möchten Sie eine Quittung?',
-        yes: '✓ Ja, drucken',
-        no: '✕ Nein',
-        paymentMethod: 'Zahlungsart',
-        completed: 'Zahlung abgeschlossen',
-        scanHint: 'Barcode einscannen oder manuell eingeben',
-        categoryInfo: 'Das System unterstützt nun eine professionelle Produktkategorisierung. Produkte können beim Anlegen einer der vordefinierten Kategorien wie Lebensmittel, Käse & Fleisch, Gemüse, Getränke, Süßwaren oder Sonstiges zugeordnet werden. Über eine komfortable Auswahl oberhalb der Produktliste lassen sich die Artikel gezielt nach Kategorie filtern und übersichtlich anzeigen. Dies erleichtert die Verwaltung und sorgt für eine strukturierte, benutzerfreundliche Darstellung aller Produkte.',
-        selectUser: 'Benutzer auswählen',
-        selectUserHint: 'Wählen Sie einen Benutzer für den Kassiervorgang',
-        dailyClosing: 'Tagesabschluss',
-        dailyClosingReport: 'Tagesabschlussbericht',
-        totalSales: 'Gesamtumsatz',
-        customersCount: 'Anzahl Kunden',
-        noPurchases: 'Keine Verkäufe',
-        dailyClosingSummary: 'Zusammenfassung des Tagesabschlusses'
-    },
-    en: {
-        appName: 'PayBox',
-        articles: 'Articles',
-        newArticle: 'New Article',
-        selectImage: 'Select Image',
-        addButton: '+ Add',
-        login: 'Login',
-        loginButton: 'Login',
-        userPlaceholder: 'User',
-        passwordPlaceholder: 'Password',
-        loginError: 'Invalid credentials',
-        cart: 'Shopping Cart',
-        emptyCart: 'Cart is empty',
-        total: 'Total:',
-        cancel: 'Cancel',
-        cash: '💵 Cash',
-        card: '💳 Card',
-        openCash: '🔓 Open Cash',
-        receiptQuestion: 'Receipt?',
-        receiptAsk: 'Would you like a receipt?',
-        yes: '✓ Yes, print',
-        no: '✕ No',
-        paymentMethod: 'Payment Method',
-        completed: 'Payment completed',
-        scanHint: 'Scan barcode or enter manually',
-        categoryInfo: 'The system now supports professional product categorization. When adding a product, you can assign it to one of the predefined categories such as Food, Cheese & Meat, Vegetables, Drinks, Sweets, or Other. A convenient selection above the product list allows you to filter and display items by category. This makes management easier and ensures a structured, user-friendly presentation of all products.',
-        selectUser: 'Select User',
-        selectUserHint: 'Choose a user for the transaction',
-        dailyClosing: 'Daily Closing',
-        dailyClosingReport: 'Daily Closing Report',
-        totalSales: 'Total Sales',
-        customersCount: 'Customer Count',
-        noPurchases: 'No Sales',
-        dailyClosingSummary: 'Daily Closing Summary'
-    },
-    ar: {
-        appName: 'PayBox',
-        articles: 'المنتجات',
-        newArticle: 'منتج جديد',
-        selectImage: 'اختر صورة',
-        addButton: '+ إضافة',
-        login: 'تسجيل الدخول',
-        loginButton: 'تسجيل الدخول',
-        userPlaceholder: 'المستخدم',
-        passwordPlaceholder: 'كلمة المرور',
-        loginError: 'بيانات تسجيل غير صحيحة',
-        cart: 'سلة التسوق',
-        emptyCart: 'السلة فارغة',
-        total: 'الإجمالي:',
-        cancel: 'إلغاء',
-        cash: '💵 نقداً',
-        card: '💳 بطاقة',
-        openCash: '🔓 فتح الدرج',
-        receiptQuestion: 'الإيصال؟',
-        receiptAsk: 'هل تريد إيصالاً؟',
-        yes: '✓ نعم، اطبع',
-        no: '✕ لا',
-        paymentMethod: 'طريقة الدفع',
-        completed: 'تمت الدفع',
-        scanHint: 'امسح الباركود أو أدخله يدويًا',
-        categoryInfo: 'يدعم النظام الآن تصنيف المنتجات بشكل احترافي. عند إضافة منتج جديد، يمكنك تعيينه إلى إحدى الفئات المحددة مسبقًا مثل المواد الغذائية أو الجبن واللحوم أو الخضروات أو المشروبات أو الحلويات أو غير ذلك. يمكنك تصفية المنتجات حسب الفئة من خلال القائمة أعلى قائمة المنتجات، مما يسهل الإدارة ويضمن عرضًا منظمًا وسهل الاستخدام لجميع المنتجات.',
-        selectUser: 'اختر المستخدم',
-        selectUserHint: 'اختر مستخدمًا للمعاملة',
-        dailyClosing: 'الإغلاق اليومي',
-        dailyClosingReport: 'تقرير الإغلاق اليومي',
-        totalSales: 'إجمالي المبيعات',
-        customersCount: 'عدد العملاء',
-        noPurchases: 'لا توجد مبيعات',
-        dailyClosingSummary: 'ملخص الإغلاق اليومي'
-    }
-};
 
 let currentLanguage = 'de';
 
@@ -446,6 +535,12 @@ function checkoutWithPayment(method) {
         inputRow.querySelectorAll('.quick-cash-btn').forEach(btn => {
             btn.onclick = () => {
                 input.value = btn.getAttribute('data-val');
+            };
+        });
+        // Schnellwahl-Buttons Funktion
+        inputRow.querySelectorAll('.quick-cash-btn').forEach(btn => {
+            btn.onclick = () => {
+                input.value = btn.getAttribute('data-val');
                 input.dispatchEvent(new Event('input'));
                 input.focus();
             };
@@ -569,21 +664,7 @@ function clearCart() {
 }
 
 // User-Daten und Transaktionen
-let currentUser = null;
-const users = ['Ahmed', 'Aboud', 'Jawad'];
-let salesData = {
-    'Ahmed': { totalSales: 0, customersCount: 0 },
-    'Aboud': { totalSales: 0, customersCount: 0 },
-    'Jawad': { totalSales: 0, customersCount: 0 }
-};
-
-// Benutzer auswählen
-function selectUser(userName) {
-    currentUser = userName;
-    localStorage.setItem('currentUser', userName);
-    updateUserButton();
-    document.getElementById('userSelectionModal').classList.remove('show');
-}
+// ...existing code...
 
 // Benutzerauswahl öffnen
 function openUserSelection() {
