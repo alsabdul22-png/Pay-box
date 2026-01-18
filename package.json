@@ -1,28 +1,31 @@
 {
-  "name": "kasse-app",
+  "name": "paybox",
   "version": "1.0.0",
-  "description": "Professionelle Kasse App für Windows",
+  "description": "Professionelle Zahlungsabwicklung und Kassenverwaltung",
   "main": "main.js",
-  "author": "Kasse App",
+  "author": "PayBox",
   "license": "MIT",
   "scripts": {
     "start": "electron .",
     "build": "electron-builder",
-    "build-win": "electron-builder --win --publish never"
+    "build-win": "electron-builder --win --publish never",
+    "create-icon": "node create-icon.js"
   },
-  "dependencies": {},
   "devDependencies": {
-    "electron": "^latest",
-    "electron-builder": "^latest"
+    "electron": "^29.4.6",
+    "electron-builder": "^24.13.3",
+    "install": "^0.13.0"
   },
   "build": {
-    "appId": "com.kasseapp.desktop",
-    "productName": "Kasse App",
+    "appId": "com.paybox.desktop",
+    "productName": "PayBox",
     "files": [
       "main.js",
+      "preload.js",
       "index.html",
       "style.css",
       "script.js",
+      "assets/**/*",
       "node_modules/**/*"
     ],
     "win": {
@@ -41,14 +44,15 @@
         }
       ],
       "certificateFile": null,
-      "certificatePassword": null
+      "certificatePassword": null,
+      "icon": "assets/icon.png"
     },
     "nsis": {
       "oneClick": false,
       "allowToChangeInstallationDirectory": true,
       "createDesktopShortcut": true,
       "createStartMenuShortcut": true,
-      "shortcutName": "Kasse App"
+      "shortcutName": "PayBox"
     },
     "directories": {
       "buildResources": "assets"

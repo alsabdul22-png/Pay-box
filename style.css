@@ -28,9 +28,36 @@ body {
     backdrop-filter: blur(10px);
 }
 
+.header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    flex: 1;
+}
+
+.logo {
+    width: 60px;
+    height: 60px;
+    background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2em;
+    box-shadow: 0 4px 16px rgba(0, 212, 255, 0.3);
+}
+
 .header h1 {
     font-size: 2.5em;
-    margin-bottom: 10px;
+    margin: 0;
     background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -42,6 +69,35 @@ body {
     font-size: 1em;
     color: #888;
     font-weight: 500;
+}
+
+/* Sprachauswahl */
+.language-selector {
+    position: absolute;
+    right: 30px;
+    top: 30px;
+}
+
+#languageSelect {
+    padding: 10px 15px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 153, 255, 0.1) 100%);
+    color: #00d4ff;
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95em;
+}
+
+#languageSelect:hover {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 153, 255, 0.2) 100%);
+    border-color: rgba(0, 212, 255, 0.5);
+}
+
+#languageSelect option {
+    background: #1a1a1a;
+    color: #e0e0e0;
 }
 
 .main-content {
@@ -70,10 +126,57 @@ body {
     font-weight: 600;
 }
 
+/* Barcode Scanner */
+.barcode-scanner {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.08) 0%, rgba(0, 153, 255, 0.08) 100%);
+    padding: 15px;
+    border-radius: 12px;
+    border: 1px solid rgba(0, 212, 255, 0.2);
+    margin-bottom: 20px;
+}
+
+.barcode-scanner h3 {
+    color: #00d4ff;
+    margin-bottom: 12px;
+    font-size: 1em;
+    font-weight: 600;
+}
+
+#barcodeInput {
+    width: 100%;
+    padding: 12px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(0, 212, 255, 0.3);
+    border-radius: 8px;
+    color: #e0e0e0;
+    font-size: 0.95em;
+    margin-bottom: 8px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+#barcodeInput:focus {
+    outline: none;
+    border-color: rgba(0, 212, 255, 0.6);
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 0 3px rgba(0, 212, 255, 0.1);
+}
+
+#barcodeInput::placeholder {
+    color: #666;
+}
+
+.scanner-hint {
+    font-size: 0.8em;
+    color: #888;
+    margin: 0;
+    text-align: center;
+}
+
 .products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 15px;
     margin-bottom: 25px;
 }
 
@@ -81,10 +184,10 @@ body {
     background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 153, 255, 0.15) 100%);
     color: #e0e0e0;
     border: 1px solid rgba(0, 212, 255, 0.3);
-    padding: 15px;
+    padding: 12px;
     border-radius: 12px;
     cursor: pointer;
-    font-size: 0.95em;
+    font-size: 0.9em;
     font-weight: 600;
     transition: all 0.3s ease;
     display: flex;
@@ -92,35 +195,61 @@ body {
     align-items: center;
     gap: 8px;
     backdrop-filter: blur(5px);
+    position: relative;
+    overflow: hidden;
+    min-height: 260px;
+    justify-content: space-between;
 }
 
 .product-btn:hover {
-    transform: translateY(-3px);
+    transform: translateY(-5px);
     background: linear-gradient(135deg, rgba(0, 212, 255, 0.25) 0%, rgba(0, 153, 255, 0.25) 100%);
     border-color: rgba(0, 212, 255, 0.5);
-    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.25);
+    box-shadow: 0 8px 24px rgba(0, 212, 255, 0.3);
 }
 
 .product-btn:active {
-    transform: translateY(-1px);
+    transform: translateY(-2px);
 }
 
 .product-name {
     font-weight: 700;
-    font-size: 0.9em;
+    font-size: 0.95em;
     color: #00d4ff;
+    text-align: center;
+    margin: 8px 0 4px 0;
 }
 
 .product-price {
-    font-size: 0.8em;
-    opacity: 0.8;
+    font-size: 1.1em;
+    font-weight: 700;
     color: #e0e0e0;
+    margin: 4px 0;
+}
+
+.product-barcode {
+    font-size: 0.75em;
+    color: #888;
+    margin: 4px 0;
+    word-break: break-all;
+    opacity: 0.7;
 }
 
 .product-delete {
-    font-size: 0.7em;
+    font-size: 0.8em;
     opacity: 0.6;
     color: #ff6b6b;
+    margin-top: auto;
+    padding: 4px 8px;
+    background: rgba(255, 107, 107, 0.1);
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.product-delete:hover {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff8080;
 }
 
 .add-product {
@@ -229,23 +358,32 @@ body {
 }
 
 .product-btn .product-image {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     background: rgba(0, 212, 255, 0.1);
-    border-radius: 6px;
+    border-radius: 8px;
     object-fit: cover;
     margin-bottom: 4px;
-    border: 1px solid rgba(0, 212, 255, 0.2);
+    border: 2px solid rgba(0, 212, 255, 0.3);
+    transition: all 0.3s ease;
+}
+
+.product-btn:hover .product-image {
+    border-color: rgba(0, 212, 255, 0.6);
+    transform: scale(1.05);
 }
 
 .product-btn .product-image-placeholder {
-    width: 60px;
-    height: 60px;
+    width: 70px;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 1.5em;
+    font-size: 2em;
     margin-bottom: 4px;
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.1) 0%, rgba(0, 153, 255, 0.1) 100%);
+    border-radius: 8px;
+    border: 2px dashed rgba(0, 212, 255, 0.3);
 }
 
 /* Warenkorb Sektion */
@@ -593,6 +731,54 @@ body {
 .btn-close:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 16px rgba(0, 212, 255, 0.4);
+}
+
+/* Quittungsfrage Modal */
+.receipt-question-text {
+    text-align: center;
+    font-size: 1.2em;
+    color: #e0e0e0;
+    margin: 20px 0 30px;
+}
+
+.receipt-buttons {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.btn-no,
+.btn-yes {
+    padding: 14px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.btn-no {
+    background: rgba(255, 107, 107, 0.2);
+    color: #ff6b6b;
+    border: 1px solid rgba(255, 107, 107, 0.3);
+}
+
+.btn-no:hover {
+    background: rgba(255, 107, 107, 0.3);
+    border-color: rgba(255, 107, 107, 0.5);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(255, 107, 107, 0.3);
+}
+
+.btn-yes {
+    background: linear-gradient(135deg, #00d4ff 0%, #0099ff 100%);
+    color: #000;
+}
+
+.btn-yes:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 212, 255, 0.4);
 }
 
 /* Responsive Design */

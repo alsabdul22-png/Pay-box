@@ -14,7 +14,7 @@ function createWindow() {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
     },
-    icon: path.join(__dirname, 'assets', 'icon.ico')
+    icon: path.join(__dirname, 'assets', 'icon.png')
   });
 
   mainWindow.loadFile('index.html');
@@ -64,14 +64,14 @@ function createMenu() {
       label: 'Hilfe',
       submenu: [
         {
-          label: 'Über Kasse App',
+          label: 'Über PayBox',
           click: () => {
             const { dialog } = require('electron');
             dialog.showMessageBox(mainWindow, {
               type: 'info',
-              title: 'Über Kasse App',
-              message: 'Kasse App v1.0.0',
-              detail: 'Professionelle Kassenverwaltung für Windows\n\n© 2026 Alle Rechte vorbehalten'
+              title: 'Über PayBox',
+              message: 'PayBox v1.0.0',
+              detail: 'Professionelle Zahlungsabwicklung & Kassenverwaltung\n\n© 2026 Alle Rechte vorbehalten'
             });
           }
         }

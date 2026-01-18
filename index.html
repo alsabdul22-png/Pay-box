@@ -3,69 +3,82 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kasse App</title>
+    <title>PayBox</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 256 256'><defs><linearGradient id='grad' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%2300d4ff;stop-opacity:1' /><stop offset='100%' style='stop-color:%230099ff;stop-opacity:1' /></linearGradient></defs><rect width='256' height='256' fill='url(%23grad)'/><rect x='30' y='40' width='196' height='140' rx='10' fill='%23ffffff' opacity='0.95'/><circle cx='128' cy='200' r='35' fill='%2300d4ff' opacity='0.8'/><text x='128' y='210' font-size='40' font-weight='bold' text-anchor='middle' fill='%23ffffff'>💳</text></svg>">
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>💳 Kasse App</h1>
+            <div class="header-top">
+                <div class="logo-container">
+                    <div class="logo">💳</div>
+                    <h1 data-i18n="appName">PayBox</h1>
+                </div>
+                <div class="language-selector">
+                    <select id="languageSelect" onchange="changeLanguage(this.value)">
+                        <option value="de">🇩🇪 Deutsch</option>
+                        <option value="en">🇬🇧 English</option>
+                        <option value="ar">🇸🇦 العربية</option>
+                    </select>
+                </div>
+            </div>
             <p class="time" id="time"></p>
         </div>
 
         <div class="main-content">
             <!-- Linke Seite: Produkte -->
             <div class="products-section">
-                <h2>Artikel</h2>
+                <h2 data-i18n="articles">Artikel</h2>
+                
+                <div class="barcode-scanner">
+                    <h3>📱 Barcode Scan</h3>
+                    <input type="text" id="barcodeInput" placeholder="Barcode einscannen..." onkeypress="handleBarcodeInput(event)">
+                    <p class="scanner-hint" data-i18n="scanHint">Barcode einscannen oder manuell eingeben</p>
+                </div>
+                
                 <div class="products-grid" id="productsGrid"></div>
                 
                 <div class="add-product">
-                    <h3>Neuer Artikel</h3>
+                    <h3 data-i18n="newArticle">Neuer Artikel</h3>
                     <input type="text" id="productName" placeholder="Artikelname">
                     <input type="number" id="productPrice" placeholder="Preis" step="0.01" min="0">
+                    <input type="text" id="productBarcode" placeholder="Barcode (optional)">
                     
                     <div class="image-upload-section">
                         <label for="productImage" class="image-upload-label">
                             <span id="imagePreviewSmall" class="image-icon">🖼️</span>
-                            <span id="imageText">Bild auswählen</span>
+                            <span id="imageText" data-i18n="selectImage">Bild auswählen</span>
                         </label>
                         <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
                         <img id="imagePreview" class="image-preview" alt="Bildvorschau">
                     </div>
                     
-                    <button onclick="addProduct()">+ Hinzufügen</button>
+                    <button onclick="addProduct()" data-i18n="addButton">+ Hinzufügen</button>
                 </div>
             </div>
 
             <!-- Rechte Seite: Warenkorb -->
             <div class="cart-section">
-                <h2>Warenkorb</h2>
+                <h2 data-i18n="cart">Warenkorb</h2>
                 <div class="cart-items" id="cartItems">
-                    <p class="empty-cart">Warenkorb ist leer</p>
+                    <p class="empty-cart" data-i18n="emptyCart">Warenkorb ist leer</p>
                 </div>
 
                 <div class="cart-summary">
-                    <div class="summary-row">
-                        <span>Summe:</span>
-                        <span id="subtotal">€ 0,00</span>
-                    </div>
-                    <div class="summary-row">
-                        <span>Steuer (19%):</span>
-                        <span id="tax">€ 0,00</span>
-                    </div>
                     <div class="summary-row total">
-                        <span>Gesamt:</span>
+                        <span data-i18n="total">Gesamt:</span>
                         <span id="total">€ 0,00</span>
                     </div>
                 </div>
 
                 <div class="payment-section">
-                    <button class="btn-clear" onclick="clearCart()">Abbrechen</button>
-                    <button class="btn-cash" onclick="checkoutWithPayment('cash')">💵 Bargeld</button>
-                    <button class="btn-card" onclick="checkoutWithPayment('card')">💳 Karte</button>
+                    <button class="btn-clear" onclick="clearCart()" data-i18n="cancel">Abbrechen</button>
+                    <button class="btn-cash" onclick="checkoutWithPayment('cash')" data-i18n="cash">💵 Bargeld</button>
+                    <button class="btn-card" onclick="checkoutWithPayment('card')" data-i18n="card">💳 Karte</button>
                 </div>
                 
-                <button class="btn-open-cash" onclick="openCash()">🔓 Kasse Öffnen</button>
+                <button class="btn-open-cash" onclick="openCash()" data-i18n="openCash">🔓 Kasse Öffnen</button>
             </div>
         </div>
     </div>
@@ -76,6 +89,18 @@
             <h2>Quittung</h2>
             <div id="receiptContent"></div>
             <button class="btn-close" onclick="closeReceipt()">OK</button>
+        </div>
+    </div>
+
+    <!-- Modal für Quittungsfrage -->
+    <div id="receiptQuestionModal" class="modal">
+        <div class="modal-content">
+            <h2 data-i18n="receiptQuestion">Quittung?</h2>
+            <p class="receipt-question-text" data-i18n="receiptAsk">Möchten Sie eine Quittung?</p>
+            <div class="receipt-buttons">
+                <button class="btn-no" onclick="closeReceiptQuestion(false)" data-i18n="no">✕ Nein</button>
+                <button class="btn-yes" onclick="closeReceiptQuestion(true)" data-i18n="yes">✓ Ja, drucken</button>
+            </div>
         </div>
     </div>
 

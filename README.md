@@ -1,6 +1,6 @@
-# Kasse App - Desktop Version
+# PayBox - Desktop Version
 
-Eine professionelle Kassenverwaltungs-Anwendung für Windows, entwickelt mit Electron.
+Eine professionelle Zahlungsabwicklungs- und Kassenverwaltungs-Anwendung für Windows, entwickelt mit Electron.
 
 ## Installation
 
