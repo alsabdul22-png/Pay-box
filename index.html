@@ -19,12 +19,16 @@
                     <div class="logo">💳</div>
                     <h1 data-i18n="appName">PayBox</h1>
                 </div>
-                <div class="language-selector">
-                    <select id="languageSelect" onchange="changeLanguage(this.value)">
-                        <option value="de">🇩🇪 Deutsch</option>
-                        <option value="en">🇬🇧 English</option>
-                        <option value="ar">🇸🇦 العربية</option>
-                    </select>
+                <div class="header-controls">
+                    <button class="btn-daily-closing" onclick="openDailyClosing()" data-i18n="dailyClosing">Tagesabschluss</button>
+                    <button class="btn-user-select" id="currentUserBtn" onclick="openUserSelection()">👤 Benutzer</button>
+                    <div class="language-selector">
+                        <select id="languageSelect" onchange="changeLanguage(this.value)">
+                            <option value="de">🇩🇪 Deutsch</option>
+                            <option value="en">🇬🇧 English</option>
+                            <option value="ar">🇸🇦 العربية</option>
+                        </select>
+                    </div>
                 </div>
             </div>
             <p class="time" id="time"></p>
@@ -122,6 +126,30 @@
             <div class="receipt-buttons">
                 <button class="btn-no" onclick="closeReceiptQuestion(false)" data-i18n="no">✕ Nein</button>
                 <button class="btn-yes" onclick="closeReceiptQuestion(true)" data-i18n="yes">✓ Ja, drucken</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal für Benutzerauswahl -->
+    <div id="userSelectionModal" class="modal user-selection-modal">
+        <div class="modal-content user-selection-content">
+            <h2 data-i18n="selectUser">Benutzer auswählen</h2>
+            <p class="user-selection-hint" data-i18n="selectUserHint">Wählen Sie einen Benutzer für den Kassiervorgang</p>
+            <div class="user-buttons-container">
+                <button class="btn-user" onclick="selectUser('Ahmed')">👨‍💼 Ahmed</button>
+                <button class="btn-user" onclick="selectUser('Aboud')">👨‍💼 Aboud</button>
+                <button class="btn-user" onclick="selectUser('Jawad')">👨‍💼 Jawad</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal für Tagesabschluss -->
+    <div id="dailyClosingModal" class="modal daily-closing-modal">
+        <div class="modal-content daily-closing-content">
+            <h2 data-i18n="dailyClosingReport">Tagesabschlussbericht</h2>
+            <div id="dailyClosingContent" class="daily-closing-report"></div>
+            <div class="daily-closing-buttons">
+                <button class="btn-close" onclick="closeDailyClosing()">OK</button>
             </div>
         </div>
     </div>

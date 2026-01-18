@@ -35,7 +35,15 @@ const translations = {
         paymentMethod: 'Zahlungsart',
         completed: 'Zahlung abgeschlossen',
         scanHint: 'Barcode einscannen oder manuell eingeben',
-        categoryInfo: 'Das System unterstützt nun eine professionelle Produktkategorisierung. Produkte können beim Anlegen einer der vordefinierten Kategorien wie Lebensmittel, Käse & Fleisch, Gemüse, Getränke, Süßwaren oder Sonstiges zugeordnet werden. Über eine komfortable Auswahl oberhalb der Produktliste lassen sich die Artikel gezielt nach Kategorie filtern und übersichtlich anzeigen. Dies erleichtert die Verwaltung und sorgt für eine strukturierte, benutzerfreundliche Darstellung aller Produkte.'
+        categoryInfo: 'Das System unterstützt nun eine professionelle Produktkategorisierung. Produkte können beim Anlegen einer der vordefinierten Kategorien wie Lebensmittel, Käse & Fleisch, Gemüse, Getränke, Süßwaren oder Sonstiges zugeordnet werden. Über eine komfortable Auswahl oberhalb der Produktliste lassen sich die Artikel gezielt nach Kategorie filtern und übersichtlich anzeigen. Dies erleichtert die Verwaltung und sorgt für eine strukturierte, benutzerfreundliche Darstellung aller Produkte.',
+        selectUser: 'Benutzer auswählen',
+        selectUserHint: 'Wählen Sie einen Benutzer für den Kassiervorgang',
+        dailyClosing: 'Tagesabschluss',
+        dailyClosingReport: 'Tagesabschlussbericht',
+        totalSales: 'Gesamtumsatz',
+        customersCount: 'Anzahl Kunden',
+        noPurchases: 'Keine Verkäufe',
+        dailyClosingSummary: 'Zusammenfassung des Tagesabschlusses'
     },
     en: {
         appName: 'PayBox',
@@ -62,7 +70,15 @@ const translations = {
         paymentMethod: 'Payment Method',
         completed: 'Payment completed',
         scanHint: 'Scan barcode or enter manually',
-        categoryInfo: 'The system now supports professional product categorization. When adding a product, you can assign it to one of the predefined categories such as Food, Cheese & Meat, Vegetables, Drinks, Sweets, or Other. A convenient selection above the product list allows you to filter and display items by category. This makes management easier and ensures a structured, user-friendly presentation of all products.'
+        categoryInfo: 'The system now supports professional product categorization. When adding a product, you can assign it to one of the predefined categories such as Food, Cheese & Meat, Vegetables, Drinks, Sweets, or Other. A convenient selection above the product list allows you to filter and display items by category. This makes management easier and ensures a structured, user-friendly presentation of all products.',
+        selectUser: 'Select User',
+        selectUserHint: 'Choose a user for the transaction',
+        dailyClosing: 'Daily Closing',
+        dailyClosingReport: 'Daily Closing Report',
+        totalSales: 'Total Sales',
+        customersCount: 'Customer Count',
+        noPurchases: 'No Sales',
+        dailyClosingSummary: 'Daily Closing Summary'
     },
     ar: {
         appName: 'PayBox',
@@ -89,7 +105,15 @@ const translations = {
         paymentMethod: 'طريقة الدفع',
         completed: 'تمت الدفع',
         scanHint: 'امسح الباركود أو أدخله يدويًا',
-        categoryInfo: 'يدعم النظام الآن تصنيف المنتجات بشكل احترافي. عند إضافة منتج جديد، يمكنك تعيينه إلى إحدى الفئات المحددة مسبقًا مثل المواد الغذائية أو الجبن واللحوم أو الخضروات أو المشروبات أو الحلويات أو غير ذلك. يمكنك تصفية المنتجات حسب الفئة من خلال القائمة أعلى قائمة المنتجات، مما يسهل الإدارة ويضمن عرضًا منظمًا وسهل الاستخدام لجميع المنتجات.'
+        categoryInfo: 'يدعم النظام الآن تصنيف المنتجات بشكل احترافي. عند إضافة منتج جديد، يمكنك تعيينه إلى إحدى الفئات المحددة مسبقًا مثل المواد الغذائية أو الجبن واللحوم أو الخضروات أو المشروبات أو الحلويات أو غير ذلك. يمكنك تصفية المنتجات حسب الفئة من خلال القائمة أعلى قائمة المنتجات، مما يسهل الإدارة ويضمن عرضًا منظمًا وسهل الاستخدام لجميع المنتجات.',
+        selectUser: 'اختر المستخدم',
+        selectUserHint: 'اختر مستخدمًا للمعاملة',
+        dailyClosing: 'الإغلاق اليومي',
+        dailyClosingReport: 'تقرير الإغلاق اليومي',
+        totalSales: 'إجمالي المبيعات',
+        customersCount: 'عدد العملاء',
+        noPurchases: 'لا توجد مبيعات',
+        dailyClosingSummary: 'ملخص الإغلاق اليومي'
     }
 };
 
@@ -463,6 +487,15 @@ function closeReceiptQuestion(wantReceipt) {
     if (wantReceipt) {
         showReceipt();
     } else {
+        // Track sales for user
+        if (currentUser && cart.length > 0) {
+            loadSalesData();
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            if (!salesData[currentUser]) salesData[currentUser] = { totalSales: 0, customersCount: 0 };
+            salesData[currentUser].totalSales += total;
+            salesData[currentUser].customersCount += 1;
+            saveSalesData();
+        }
         cart = [];
         renderCart();
         alert('✓ Zahlung abgeschlossen!\nKeine Quittung gedruckt.');
@@ -506,6 +539,15 @@ function showReceipt() {
     `;
     document.getElementById('receiptContent').innerHTML = receiptHTML;
     document.getElementById('receiptModal').classList.add('show');
+    // Track sales for user
+    if (currentUser && cart.length > 0) {
+        loadSalesData();
+        if (!salesData[currentUser]) salesData[currentUser] = { totalSales: 0, customersCount: 0 };
+        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+        salesData[currentUser].totalSales += total;
+        salesData[currentUser].customersCount += 1;
+        saveSalesData();
+    }
     cart = [];
     renderCart();
     window.lastCashGiven = null;
@@ -526,10 +568,124 @@ function clearCart() {
     renderCart();
 }
 
+// User-Daten und Transaktionen
+let currentUser = null;
+const users = ['Ahmed', 'Aboud', 'Jawad'];
+let salesData = {
+    'Ahmed': { totalSales: 0, customersCount: 0 },
+    'Aboud': { totalSales: 0, customersCount: 0 },
+    'Jawad': { totalSales: 0, customersCount: 0 }
+};
+
+// Benutzer auswählen
+function selectUser(userName) {
+    currentUser = userName;
+    localStorage.setItem('currentUser', userName);
+    updateUserButton();
+    document.getElementById('userSelectionModal').classList.remove('show');
+}
+
+// Benutzerauswahl öffnen
+function openUserSelection() {
+    if (!currentUser) {
+        document.getElementById('userSelectionModal').classList.add('show');
+    } else {
+        // Toggle - wenn bereits ein Benutzer ausgewählt, kann ein neuer ausgewählt werden
+        document.getElementById('userSelectionModal').classList.add('show');
+    }
+}
+
+// Button des aktuellen Benutzers aktualisieren
+function updateUserButton() {
+    const btn = document.getElementById('currentUserBtn');
+    if (btn) {
+        btn.textContent = currentUser ? `👤 ${currentUser}` : '👤 Benutzer';
+    }
+}
+
+// Tagesabschluss öffnen
+function openDailyClosing() {
+    loadSalesData();
+    generateDailyClosingReport();
+    document.getElementById('dailyClosingModal').classList.add('show');
+}
+
+// Tagesabschluss schließen
+function closeDailyClosing() {
+    document.getElementById('dailyClosingModal').classList.remove('show');
+}
+
+// Verkaufsdaten laden
+function loadSalesData() {
+    const savedData = localStorage.getItem('salesData');
+    if (savedData) {
+        salesData = JSON.parse(savedData);
+    }
+}
+
+// Verkaufsdaten speichern
+function saveSalesData() {
+    localStorage.setItem('salesData', JSON.stringify(salesData));
+}
+
+// Tagesabschlussbericht generieren
+function generateDailyClosingReport() {
+    loadSalesData();
+    const t = translations[currentLanguage];
+    
+    let reportHTML = `<div class="daily-closing-report-header"><strong data-i18n="dailyClosingSummary">${t.dailyClosingSummary}</strong></div>`;
+    reportHTML += '<div class="daily-closing-items">';
+    
+    let totalAllSales = 0;
+    let totalAllCustomers = 0;
+    
+    users.forEach(user => {
+        const data = salesData[user] || { totalSales: 0, customersCount: 0 };
+        totalAllSales += data.totalSales;
+        totalAllCustomers += data.customersCount;
+        
+        const salesDisplay = data.totalSales > 0 ? `€ ${data.totalSales.toFixed(2)}` : `<span class="no-sales">${t.noPurchases}</span>`;
+        
+        reportHTML += `
+            <div class="daily-closing-user-item">
+                <div class="user-name">👤 ${user}</div>
+                <div class="user-stats">
+                    <div class="stat">
+                        <span class="stat-label">${t.totalSales}:</span>
+                        <span class="stat-value">${salesDisplay}</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-label">${t.customersCount}:</span>
+                        <span class="stat-value">${data.customersCount}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+    });
+    
+    reportHTML += '</div>';
+    reportHTML += `
+        <div class="daily-closing-totals">
+            <div class="total-row">
+                <span><strong>${t.totalSales}:</strong></span>
+                <span class="total-amount">€ ${totalAllSales.toFixed(2)}</span>
+            </div>
+            <div class="total-row">
+                <span><strong>${t.customersCount}:</strong></span>
+                <span class="total-amount">${totalAllCustomers}</span>
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('dailyClosingContent').innerHTML = reportHTML;
+}
+
 // Modal mit ESC schließen
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') {
         document.getElementById('receiptModal').classList.remove('show');
+        document.getElementById('userSelectionModal').classList.remove('show');
+        document.getElementById('dailyClosingModal').classList.remove('show');
     }
 });
 
@@ -546,6 +702,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!localStorage.getItem('products')) {
         localStorage.setItem('products', JSON.stringify(defaultProducts));
     }
+    
+    // Lade gespeicherten Benutzer oder zeige Benutzerauswahl
+    const savedUser = localStorage.getItem('currentUser');
+    if (savedUser && users.includes(savedUser)) {
+        currentUser = savedUser;
+        updateUserButton();
+    } else {
+        // Zeige Benutzerauswahl beim Start
+        setTimeout(() => {
+            document.getElementById('userSelectionModal').classList.add('show');
+        }, 300);
+    }
+    
     loadProducts();
     populateCategorySelect();
     // Standard: alle anzeigen
