@@ -1,0 +1,57 @@
+{
+  "name": "kasse-app",
+  "version": "1.0.0",
+  "description": "Professionelle Kasse App für Windows",
+  "main": "main.js",
+  "author": "Kasse App",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder",
+    "build-win": "electron-builder --win --publish never"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "electron": "^latest",
+    "electron-builder": "^latest"
+  },
+  "build": {
+    "appId": "com.kasseapp.desktop",
+    "productName": "Kasse App",
+    "files": [
+      "main.js",
+      "index.html",
+      "style.css",
+      "script.js",
+      "node_modules/**/*"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        },
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "certificateFile": null,
+      "certificatePassword": null
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "Kasse App"
+    },
+    "directories": {
+      "buildResources": "assets"
+    }
+  }
+}
