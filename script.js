@@ -1,16 +1,17 @@
 // Standardprodukte
 const defaultProducts = [
-    { id: 1, name: 'Kaffee', price: 2.50 },
-    { id: 2, name: 'Wasser', price: 1.50 },
-    { id: 3, name: 'Sandwich', price: 5.99 },
-    { id: 4, name: 'Kuchen', price: 3.50 },
-    { id: 5, name: 'Saft', price: 2.99 },
-    { id: 6, name: 'Salat', price: 6.99 }
+    { id: 1, name: 'Kaffee', price: 2.50, image: null },
+    { id: 2, name: 'Wasser', price: 1.50, image: null },
+    { id: 3, name: 'Sandwich', price: 5.99, image: null },
+    { id: 4, name: 'Kuchen', price: 3.50, image: null },
+    { id: 5, name: 'Saft', price: 2.99, image: null },
+    { id: 6, name: 'Salat', price: 6.99, image: null }
 ];
 
 let products = [];
 let cart = [];
 let nextProductId = 7;
+let currentProductImage = null;
 
 // Uhrzeit aktualisieren
 function updateTime() {
@@ -44,7 +45,16 @@ function renderProducts() {
     products.forEach(product => {
         const btn = document.createElement('button');
         btn.className = 'product-btn';
+        
+        let imageHTML = '';
+        if (product.image) {
+            imageHTML = `<img src="${product.image}" class="product-image" alt="${product.name}">`;
+        } else {
+            imageHTML = `<div class="product-image-placeholder">📦</div>`;
+        }
+        
         btn.innerHTML = `
+            ${imageHTML}
             <span class="product-name">${product.name}</span>
             <span class="product-price">€ ${product.price.toFixed(2)}</span>
             <span class="product-delete" onclick="deleteProduct(event, ${product.id})">✕</span>
@@ -70,13 +80,42 @@ function addProduct() {
     products.push({
         id: nextProductId++,
         name: name,
-        price: price
+        price: price,
+        image: currentProductImage
     });
     
     localStorage.setItem('products', JSON.stringify(products));
     nameInput.value = '';
     priceInput.value = '';
+    document.getElementById('productImage').value = '';
+    const preview = document.getElementById('imagePreview');
+    preview.classList.remove('show');
+    document.getElementById('imageText').textContent = 'Bild auswählen';
+    document.getElementById('imagePreviewSmall').textContent = '🖼️';
+    currentProductImage = null;
     renderProducts();
+}
+
+// Bildvorschau
+function previewImage(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        const imageData = e.target.result;
+        currentProductImage = imageData;
+        
+        const preview = document.getElementById('imagePreview');
+        const imageText = document.getElementById('imageText');
+        const imageIcon = document.getElementById('imagePreviewSmall');
+        
+        preview.src = imageData;
+        preview.classList.add('show');
+        imageText.textContent = 'Bild geändert ✓';
+        imageIcon.textContent = '✓';
+    };
+    reader.readAsDataURL(file);
 }
 
 // Produkt löschen
@@ -154,13 +193,23 @@ function updateCartSummary() {
     document.querySelector('.btn-checkout').disabled = cart.length === 0;
 }
 
-// Kasse (Bezahlung)
-function checkout() {
+// Kasse öffnen
+function openCash() {
+    const audio = new Audio('data:audio/wav;base64,UklGRiYAAABXQVZFZm10IBAAAAABAAEAQB8AAAB9AAACABAAZGF0YQIAAAAAAA==');
+    audio.play().catch(e => console.log('Audio-Fehler'));
+    
+    alert('💳 Kassenschublade öffnen!\n\nDie Kassenschublade wurde geöffnet.');
+}
+
+// Bezahlung mit Zahlungsart
+function checkoutWithPayment(method) {
     if (cart.length === 0) return;
     
     const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const tax = subtotal * 0.19;
     const total = subtotal + tax;
+    
+    const paymentMethodText = method === 'cash' ? '💵 Bargeld' : '💳 Karte';
     
     // Quittung generieren
     const receiptHTML = `
@@ -184,6 +233,10 @@ function checkout() {
                 <span>GESAMT:</span>
                 <span>€ ${total.toFixed(2)}</span>
             </div>
+        </div>
+        
+        <div class="receipt-payment">
+            <strong>Zahlungsart:</strong> ${paymentMethodText}
         </div>
         
         <div class="receipt-time">

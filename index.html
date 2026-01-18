@@ -23,6 +23,16 @@
                     <h3>Neuer Artikel</h3>
                     <input type="text" id="productName" placeholder="Artikelname">
                     <input type="number" id="productPrice" placeholder="Preis" step="0.01" min="0">
+                    
+                    <div class="image-upload-section">
+                        <label for="productImage" class="image-upload-label">
+                            <span id="imagePreviewSmall" class="image-icon">🖼️</span>
+                            <span id="imageText">Bild auswählen</span>
+                        </label>
+                        <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
+                        <img id="imagePreview" class="image-preview" alt="Bildvorschau">
+                    </div>
+                    
                     <button onclick="addProduct()">+ Hinzufügen</button>
                 </div>
             </div>
@@ -51,8 +61,11 @@
 
                 <div class="payment-section">
                     <button class="btn-clear" onclick="clearCart()">Abbrechen</button>
-                    <button class="btn-checkout" onclick="checkout()">Bezahlen</button>
+                    <button class="btn-cash" onclick="checkoutWithPayment('cash')">💵 Bargeld</button>
+                    <button class="btn-card" onclick="checkoutWithPayment('card')">💳 Karte</button>
                 </div>
+                
+                <button class="btn-open-cash" onclick="openCash()">🔓 Kasse Öffnen</button>
             </div>
         </div>
     </div>
