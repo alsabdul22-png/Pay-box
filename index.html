@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kasse App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💳 Kasse App</h1>
+            <p class="time" id="time"></p>
+        </div>
+
+        <div class="main-content">
+            <!-- Linke Seite: Produkte -->
+            <div class="products-section">
+                <h2>Artikel</h2>
+                <div class="products-grid" id="productsGrid"></div>
+                
+                <div class="add-product">
+                    <h3>Neuer Artikel</h3>
+                    <input type="text" id="productName" placeholder="Artikelname">
+                    <input type="number" id="productPrice" placeholder="Preis" step="0.01" min="0">
+                    <button onclick="addProduct()">+ Hinzufügen</button>
+                </div>
+            </div>
+
+            <!-- Rechte Seite: Warenkorb -->
+            <div class="cart-section">
+                <h2>Warenkorb</h2>
+                <div class="cart-items" id="cartItems">
+                    <p class="empty-cart">Warenkorb ist leer</p>
+                </div>
+
+                <div class="cart-summary">
+                    <div class="summary-row">
+                        <span>Summe:</span>
+                        <span id="subtotal">€ 0,00</span>
+                    </div>
+                    <div class="summary-row">
+                        <span>Steuer (19%):</span>
+                        <span id="tax">€ 0,00</span>
+                    </div>
+                    <div class="summary-row total">
+                        <span>Gesamt:</span>
+                        <span id="total">€ 0,00</span>
+                    </div>
+                </div>
+
+                <div class="payment-section">
+                    <button class="btn-clear" onclick="clearCart()">Abbrechen</button>
+                    <button class="btn-checkout" onclick="checkout()">Bezahlen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal für Zahlungsbestätigung -->
+    <div id="receiptModal" class="modal">
+        <div class="modal-content">
+            <h2>Quittung</h2>
+            <div id="receiptContent"></div>
+            <button class="btn-close" onclick="closeReceipt()">OK</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
