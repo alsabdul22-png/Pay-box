@@ -140,3 +140,12 @@ Das Back-Office ist eine **eigenständige Vollseite** mit 6 Hauptbereichen:
 Nach `npm run build-win` finden Sie im `dist/`-Ordner:
 - **KasseApp-Setup.exe**: Installationsprogramm
 - **KasseApp.exe**: Portable Version (läuft ohne Installation)
+
+---
+
+Made by Abdulrahman Alshouly
+
+## Version & Contact
+
+- Version: 1.0.0
+- Contact: alsabdul22@gmail.com

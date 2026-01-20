@@ -62,6 +62,10 @@ const translations = {
         saveReconciliation: 'Abrechnung speichern',
         generate: 'Generieren',
         success: 'Erfolgreich!'
+        ,madeBy: 'Erstellt von Abdulrahman Alshouly'
+        ,about: 'Info'
+        ,aboutTitle: 'Über PayBox'
+        ,aboutBody: 'PayBox POS & Back-Office System. Entwickelt von Abdulrahman Alshouly.'
     },
     en: {
         appName: 'PayBox',
@@ -121,6 +125,10 @@ const translations = {
         saveReconciliation: 'Save Reconciliation',
         generate: 'Generate',
         success: 'Success!'
+        ,madeBy: 'Made by Abdulrahman Alshouly'
+        ,about: 'About'
+        ,aboutTitle: 'About PayBox'
+        ,aboutBody: 'PayBox POS & Back-Office System. Made by Abdulrahman Alshouly.'
     },
     ar: {
         appName: 'PayBox',
@@ -180,6 +188,10 @@ const translations = {
         saveReconciliation: 'حفظ المطابقة',
         generate: 'توليد',
         success: 'نجح!'
+        ,madeBy: 'تم الإنشاء بواسطة عبد الرحمن الشولي'
+        ,about: 'حول'
+        ,aboutTitle: 'حول PayBox'
+        ,aboutBody: 'نظام نقاط البيع وإدارة Back-Office. بواسطة عبد الرحمن الشولي.'
     }
 };
 
@@ -210,6 +222,8 @@ let products = [];
 let cart = [];
 let nextProductId = 7;
 let currentProductImage = null;
+const APP_VERSION = '1.0.0';
+const AUTHOR_EMAIL = 'alsabdul22@gmail.com';
 
 let salesData = {
     'Ahmed': { totalSales: 0, customersCount: 0 },
@@ -306,6 +320,18 @@ function updatePageLanguage() {
         document.body.style.direction = 'ltr';
     }
     updateCategoryInfoText();
+    // update dynamic about body if present
+    const aboutEl = document.getElementById('aboutBodyText');
+    if (aboutEl) {
+        aboutEl.innerHTML = buildAboutBody();
+    }
+}
+
+function buildAboutBody() {
+    const t = translations[currentLanguage];
+    const base = t.aboutBody || '';
+    const email = `<a href=\"mailto:${AUTHOR_EMAIL}\">${AUTHOR_EMAIL}</a>`;
+    return `${base} <br><strong>Version:</strong> ${APP_VERSION} <br><strong>Kontakt:</strong> ${email}`;
 }
 
 function updateCategoryInfoText() {
@@ -757,6 +783,23 @@ function closeReceipt() {
 }
 
 // ========================
+// ABOUT MODAL
+// ========================
+
+function showAbout() {
+    const modal = document.getElementById('aboutModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    document.getElementById('aboutModal').querySelector('.modal-content').focus();
+}
+
+function closeAbout() {
+    const modal = document.getElementById('aboutModal');
+    if (!modal) return;
+    modal.style.display = 'none';
+}
+
+// ========================
 // UHRZEIT
 // ========================
 
@@ -831,7 +874,7 @@ let employeeShifts = {
 let inventoryData = {};
 let backOfficeUser = null;
 let backOfficeRole = 'admin'; // admin, manager, employee
-const BACKOFFICE_PASSWORD = '2009';
+let backofficePassword = localStorage.getItem('backofficePassword') || '2009';
 
 function showBackOffice() {
     // Show password modal instead of directly showing back office
@@ -843,7 +886,7 @@ function showBackOffice() {
 
 function verifyBackofficePassword() {
     const password = document.getElementById('backofficePasswordInput').value;
-    if (password === BACKOFFICE_PASSWORD) {
+    if (password === backofficePassword) {
         closeBackofficePasswordModal();
         enterBackOffice();
     } else {
@@ -853,6 +896,51 @@ function verifyBackofficePassword() {
         document.getElementById('backofficePasswordInput').value = '';
         document.getElementById('backofficePasswordInput').focus();
     }
+}
+
+function showChangePasswordModal() {
+    const modal = document.getElementById('changePasswordModal');
+    if (!modal) return;
+    modal.style.display = 'flex';
+    document.getElementById('changeOldPassword').value = '';
+    document.getElementById('changeNewPassword').value = '';
+    document.getElementById('changeConfirmPassword').value = '';
+    document.getElementById('changePasswordError').style.display = 'none';
+    document.getElementById('changeOldPassword').focus();
+}
+
+function closeChangePasswordModal() {
+    const modal = document.getElementById('changePasswordModal');
+    if (!modal) return;
+    modal.style.display = 'none';
+}
+
+function changeBackofficePassword() {
+    const oldP = document.getElementById('changeOldPassword').value;
+    const newP = document.getElementById('changeNewPassword').value;
+    const conf = document.getElementById('changeConfirmPassword').value;
+    const err = document.getElementById('changePasswordError');
+
+    if (!oldP || !newP) {
+        err.textContent = 'Bitte alle Felder ausfüllen.';
+        err.style.display = 'block';
+        return;
+    }
+    if (oldP !== backofficePassword) {
+        err.textContent = 'Altes Passwort ist falsch.';
+        err.style.display = 'block';
+        return;
+    }
+    if (newP !== conf) {
+        err.textContent = 'Neue Passwörter stimmen nicht überein.';
+        err.style.display = 'block';
+        return;
+    }
+
+    backofficePassword = newP;
+    localStorage.setItem('backofficePassword', backofficePassword);
+    closeChangePasswordModal();
+    alert('Passwort erfolgreich geändert.');
 }
 
 function handlePasswordKeyPress(event) {
@@ -865,6 +953,24 @@ function closeBackofficePasswordModal() {
     document.getElementById('backofficePasswordModal').style.display = 'none';
     document.getElementById('backofficePasswordInput').value = '';
     document.getElementById('passwordError').style.display = 'none';
+}
+
+function requestBackofficeAccess() {
+    const userEmail = "alsabdul22@gmail.com";
+    const subject = encodeURIComponent("Back-Office Access Request");
+    const timestamp = new Date().toLocaleString('de-DE');
+    const user = currentUser || 'Unknown';
+    const body = encodeURIComponent(`Hallo,\n\nIch benötige Zugriff auf das Back-Office.\n\nBenutzer: ${user}\nZeit: ${timestamp}`);
+    
+    window.location.href = `mailto:${userEmail}?subject=${subject}&body=${body}`;
+    
+    // Show confirmation message
+    setTimeout(() => {
+        const errorDiv = document.getElementById('passwordError');
+        errorDiv.textContent = 'E-Mail-Client wird geöffnet...';
+        errorDiv.style.display = 'block';
+        errorDiv.style.color = '#81c784';
+    }, 100);
 }
 
 function enterBackOffice() {

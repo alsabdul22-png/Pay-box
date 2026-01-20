@@ -44,6 +44,7 @@
                 <h1 data-i18n="backOffice">Back-Office</h1>
                 <div class="header-controls">
                     <span id="backOfficeUserRole" class="role-badge">Admin</span>
+                    <button class="btn-change-password" onclick="showChangePasswordModal()">🔒 Passwort ändern</button>
                     <button class="btn-back-screen" onclick="exitBackOffice()" data-i18n="cancel">← Zurück</button>
                 </div>
             </div>
@@ -217,17 +218,18 @@
                         <div class="logo">💳</div>
                         <h1 data-i18n="appName">PayBox</h1>
                     </div>
-                    <div class="header-controls">
-                        <button class="btn-daily-closing" onclick="openDailyClosing()" data-i18n="dailyClosing">📊 Tagesabschluss</button>
-                        <button class="btn-user-select" id="currentUserBtn" onclick="changeUser()">👤 Benutzer</button>
-                        <div class="language-selector">
-                            <select id="languageSelect" onchange="changeLanguage(this.value)">
-                                <option value="de">🇩🇪 Deutsch</option>
-                                <option value="en">🇬🇧 English</option>
-                                <option value="ar">🇸🇦 العربية</option>
-                            </select>
-                        </div>
-                    </div>
+                                    <div class="header-controls">
+                                        <button class="btn-daily-closing" onclick="openDailyClosing()" data-i18n="dailyClosing">📊 Tagesabschluss</button>
+                                        <button class="btn-about" onclick="showAbout()" data-i18n="about">Info</button>
+                                        <button class="btn-user-select" id="currentUserBtn" onclick="changeUser()">👤 Benutzer</button>
+                                        <div class="language-selector">
+                                            <select id="languageSelect" onchange="changeLanguage(this.value)">
+                                                <option value="de">🇩🇪 Deutsch</option>
+                                                <option value="en">🇬🇧 English</option>
+                                                <option value="ar">🇸🇦 العربية</option>
+                                            </select>
+                                        </div>
+                                    </div>
                 </div>
                 <p class="time" id="time"></p>
             </div>
@@ -312,6 +314,34 @@
                 <button class="btn-cancel" onclick="closeBackofficePasswordModal()" data-i18n="cancel">✕ Abbrechen</button>
                 <button class="btn-ok" onclick="verifyBackofficePassword()" data-i18n="ok">✓ OK</button>
             </div>
+            <div style="margin-top: 20px; padding-top: 15px; border-top: 1px solid rgba(255, 255, 255, 0.2);">
+                <p style="color: #aaa; font-size: 0.9em; margin-bottom: 10px;">Oder senden Sie eine Zugriffsanfrage per E-Mail:</p>
+                <button class="btn-email" onclick="requestBackofficeAccess()" style="width: 100%; margin-top: 10px;">📧 Anfrage an Admin senden</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal für Passwort ändern -->
+    <div id="changePasswordModal" class="modal" style="display:none;">
+        <div class="modal-content">
+            <h2>Passwort ändern</h2>
+            <div class="form-group">
+                <label>Altes Passwort:</label>
+                <input type="password" id="changeOldPassword" placeholder="Altes Passwort">
+            </div>
+            <div class="form-group">
+                <label>Neues Passwort:</label>
+                <input type="password" id="changeNewPassword" placeholder="Neues Passwort">
+            </div>
+            <div class="form-group">
+                <label>Neues Passwort bestätigen:</label>
+                <input type="password" id="changeConfirmPassword" placeholder="Neues Passwort bestätigen">
+            </div>
+            <div id="changePasswordError" class="password-error" style="color:#ff3b30; margin-top:10px; display:none;"></div>
+            <div class="password-buttons" style="margin-top:12px; display:flex; gap:8px;">
+                <button class="btn-cancel" onclick="closeChangePasswordModal()">✕ Abbrechen</button>
+                <button class="btn-ok" onclick="changeBackofficePassword()">✓ Passwort ändern</button>
+            </div>
         </div>
     </div>
 
@@ -319,3 +349,19 @@
 </body>
 
 </html>
+
+<!-- App credit (translatable) -->
+<div style="position:fixed;left:8px;right:8px;bottom:8px;z-index:9999;text-align:center;pointer-events:auto;">
+    <span style="display:inline-block;padding:6px 10px;background:rgba(0,0,0,0.6);color:#fff;border-radius:8px;font-size:13px;opacity:0.95;" data-i18n="madeBy">Made by Abdulrahman Alshouly</span>
+</div>
+
+<!-- About Modal -->
+    <div id="aboutModal" class="modal" style="display:none;">
+    <div class="modal-content" style="max-width:520px;min-width:300px;padding:18px;">
+        <h2 data-i18n="aboutTitle">About PayBox</h2>
+        <p id="aboutBodyText"></p>
+        <div style="margin-top:12px; text-align:right;">
+            <button class="btn-close" onclick="closeAbout()">OK</button>
+        </div>
+    </div>
+</div>
