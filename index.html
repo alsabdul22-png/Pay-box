@@ -36,6 +36,162 @@
         </div>
     </div>
 
+    <!-- Back-Office Dashboard Screen -->
+    <div id="backOfficeScreen" class="full-screen backoffice-screen" style="display:none;">
+        <div class="screen-container">
+            <div class="screen-header">
+                <div class="logo-large">📊</div>
+                <h1 data-i18n="backOffice">Back-Office</h1>
+                <div class="header-controls">
+                    <span id="backOfficeUserRole" class="role-badge">Admin</span>
+                    <button class="btn-back-screen" onclick="exitBackOffice()" data-i18n="cancel">← Zurück</button>
+                </div>
+            </div>
+            <div class="backoffice-nav">
+                <button class="nav-btn active" onclick="showBackOfficeTab('dashboard')" data-tab="dashboard">📊 Dashboard</button>
+                <button class="nav-btn" onclick="showBackOfficeTab('articles')" data-tab="articles">📦 Artikel</button>
+                <button class="nav-btn" onclick="showBackOfficeTab('cashier')" data-tab="cashier">💰 Kasse</button>
+                <button class="nav-btn" onclick="showBackOfficeTab('sales')" data-tab="sales">📈 Verkauf</button>
+                <button class="nav-btn" onclick="showBackOfficeTab('inventory')" data-tab="inventory">📋 Lager</button>
+                <button class="nav-btn" onclick="showBackOfficeTab('employees')" data-tab="employees">👥 Team</button>
+            </div>
+            <div class="screen-content backoffice-content">
+                <!-- Dashboard Tab -->
+                <div id="dashboardTab" class="backoffice-tab active">
+                    <h2 data-i18n="dashboard">Übersicht</h2>
+                    <div class="export-buttons">
+                        <button class="btn-export" onclick="viewHTMLReport()" title="Report im Browser anzeigen">📄 Report anzeigen</button>
+                        <button class="btn-export" onclick="printReport()" title="Report drucken">🖨️ Drucken</button>
+                        <button class="btn-export" onclick="exportReportAsJSON()" title="JSON exportieren">📥 JSON</button>
+                        <button class="btn-export" onclick="exportReportAsCSV()" title="CSV exportieren">📊 CSV</button>
+                    </div>
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <div class="kpi-label" data-i18n="todaySales">Heutige Umsätze</div>
+                            <div class="kpi-value" id="kpiTodaySales">€0,00</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label" data-i18n="todayTransactions">Transaktionen</div>
+                            <div class="kpi-value" id="kpiTransactions">0</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label" data-i18n="avgTicket">Durchschn. Ticket</div>
+                            <div class="kpi-value" id="kpiAvgTicket">€0,00</div>
+                        </div>
+                        <div class="kpi-card">
+                            <div class="kpi-label" data-i18n="topProduct">Top Artikel</div>
+                            <div class="kpi-value" id="kpiTopProduct">-</div>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <h3 data-i18n="salesByEmployee">Verkäufe nach Mitarbeiter</h3>
+                        <div id="employeeSalesChart" class="employee-chart"></div>
+                    </div>
+                </div>
+
+                <!-- Artikel Tab -->
+                <div id="articlesTab" class="backoffice-tab" style="display:none;">
+                    <h2 data-i18n="productManagement">Artikelverwaltung</h2>
+                    <div class="article-container">
+                        <div class="article-form">
+                            <h3 data-i18n="newArticle">Neuer Artikel</h3>
+                            <div class="form-group">
+                                <label data-i18n="articleName">Artikelname:</label>
+                                <input type="text" id="boProductName" placeholder="z.B. Brot">
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="price">Preis:</label>
+                                <input type="number" id="boProductPrice" placeholder="0.00" step="0.01" min="0">
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="barcode">Barcode (optional):</label>
+                                <input type="text" id="boProductBarcode" placeholder="123456789">
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="category">Kategorie:</label>
+                                <select id="boProductCategory">
+                                    <option value="food">Lebensmittel</option>
+                                    <option value="cheese_meat">Käse & Fleisch</option>
+                                    <option value="vegetables">Gemüse</option>
+                                    <option value="drinks">Getränke</option>
+                                    <option value="sweets">Süßwaren</option>
+                                    <option value="other">Sonstiges</option>
+                                </select>
+                            </div>
+                            <button class="btn-primary" onclick="addProductFromBackOffice()" style="width:100%;" data-i18n="addButton">➕ Artikel hinzufügen</button>
+                        </div>
+                        <div class="article-list">
+                            <h3 data-i18n="articles">Artikel (insgesamt: <span id="articleCount">0</span>)</h3>
+                            <input type="text" class="search-input" id="articleSearch" placeholder="Artikel suchen..." onkeyup="filterArticlesList()">
+                            <div id="backofficeArticlesList"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kassenabrechnung Tab -->
+                <div id="cashierTab" class="backoffice-tab" style="display:none;">
+                    <h2 data-i18n="cashierReconciliation">Kassenabrechnung</h2>
+                    <div class="cashier-form">
+                        <div class="form-group">
+                            <label data-i18n="register">Kasse/Register:</label>
+                            <select id="registerSelect" onchange="updateRegisterSummary()">
+                                <option value="1">Register 1</option>
+                                <option value="2">Register 2</option>
+                                <option value="all">Alle Kassen</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="expectedCash">Erwartetes Bargeld:</label>
+                            <input type="number" id="expectedCash" step="0.01" readonly>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="actualCash">Gezähltes Bargeld:</label>
+                            <input type="number" id="actualCash" step="0.01" placeholder="0.00" onchange="calculateDifference()">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="cardTransactions">Kartentransaktionen:</label>
+                            <input type="number" id="cardTransactions" step="0.01" readonly>
+                        </div>
+                        <div id="differenceAlert" class="alert"></div>
+                        <div class="cashier-summary">
+                            <div class="summary-item">
+                                <span data-i18n="difference">Differenz:</span>
+                                <span id="cashDifference" class="difference-value">€0,00</span>
+                            </div>
+                        </div>
+                        <button class="btn-primary" onclick="saveCashierReconciliation()" data-i18n="saveReconciliation">Abrechnung speichern</button>
+                    </div>
+                </div>
+
+                <!-- Verkaufsanalyse Tab -->
+                <div id="salesTab" class="backoffice-tab" style="display:none;">
+                    <h2 data-i18n="salesAnalysis">Verkaufsanalyse</h2>
+                    <div class="analysis-filters">
+                        <input type="date" id="analysisDateFrom">
+                        <input type="date" id="analysisDateTo">
+                        <button class="btn-primary" onclick="generateSalesAnalysis()" data-i18n="generate">Generieren</button>
+                    </div>
+                    <div id="salesAnalysisContent" class="analysis-content"></div>
+                </div>
+
+                <!-- Inventar Tab -->
+                <div id="inventoryTab" class="backoffice-tab" style="display:none;">
+                    <h2 data-i18n="inventoryManagement">Lagerverwaltung</h2>
+                    <div class="inventory-form">
+                        <input type="text" id="inventorySearch" placeholder="Artikel suchen..." onkeyup="filterInventoryList()">
+                        <div id="inventoryList" class="inventory-list"></div>
+                    </div>
+                </div>
+
+                <!-- Mitarbeiter Tab -->
+                <div id="employeesTab" class="backoffice-tab" style="display:none;">
+                    <h2 data-i18n="employeeManagement">Mitarbeiterverwaltung</h2>
+                    <div id="employeesList" class="employees-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Daily Closing Screen -->
     <div id="dailyClosingScreen" class="full-screen daily-closing-screen">
         <div class="screen-container">
@@ -95,32 +251,6 @@
                     <div class="category-info" id="categoryInfo" style="margin-bottom:10px;color:#00d4ff;font-weight:500;"></div>
                     
                     <div class="products-grid" id="productsGrid"></div>
-                    
-                    <div class="add-product">
-                        <h3 data-i18n="newArticle">Neuer Artikel</h3>
-                        <input type="text" id="productName" placeholder="Artikelname">
-                        <input type="number" id="productPrice" placeholder="Preis" step="0.01" min="0">
-                        <input type="text" id="productBarcode" placeholder="Barcode (optional)">
-                        <select id="productCategory">
-                            <option value="food">Lebensmittel</option>
-                            <option value="cheese_meat">Käse & Fleisch</option>
-                            <option value="vegetables">Gemüse</option>
-                            <option value="drinks">Getränke</option>
-                            <option value="sweets">Süßwaren</option>
-                            <option value="other">Sonstiges</option>
-                        </select>
-                        
-                        <div class="image-upload-section">
-                            <label for="productImage" class="image-upload-label">
-                                <span id="imagePreviewSmall" class="image-icon">🖼️</span>
-                                <span id="imageText" data-i18n="selectImage">Bild auswählen</span>
-                            </label>
-                            <input type="file" id="productImage" accept="image/*" onchange="previewImage(event)">
-                            <img id="imagePreview" class="image-preview" alt="Bildvorschau">
-                        </div>
-                        
-                        <button onclick="addProduct()" data-i18n="addButton">+ Hinzufügen</button>
-                    </div>
                 </div>
 
                 <!-- Rechte Seite: Warenkorb -->
@@ -144,6 +274,7 @@
                     </div>
                     
                     <button class="btn-open-cash" onclick="openCash()" data-i18n="openCash">🔓 Kasse Öffnen</button>
+                    <button class="btn-backoffice" onclick="showBackOffice()" data-i18n="backOffice">📊 Back-Office</button>
                 </div>
             </div>
         </div>
@@ -166,6 +297,20 @@
             <div class="receipt-buttons">
                 <button class="btn-no" onclick="closeReceiptQuestion(false)" data-i18n="no">✕ Nein</button>
                 <button class="btn-yes" onclick="closeReceiptQuestion(true)" data-i18n="yes">✓ Ja, drucken</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal für Back-Office Passwort -->
+    <div id="backofficePasswordModal" class="modal">
+        <div class="modal-content">
+            <h2 data-i18n="backOfficePassword">Back-Office Passwort</h2>
+            <p data-i18n="enterBackOfficePassword">Bitte geben Sie das Passwort ein:</p>
+            <input type="password" id="backofficePasswordInput" placeholder="Passwort eingeben" onkeypress="handlePasswordKeyPress(event)">
+            <div id="passwordError" class="password-error" style="color: #ff3b30; margin-top: 10px; display: none;"></div>
+            <div class="password-buttons">
+                <button class="btn-cancel" onclick="closeBackofficePasswordModal()" data-i18n="cancel">✕ Abbrechen</button>
+                <button class="btn-ok" onclick="verifyBackofficePassword()" data-i18n="ok">✓ OK</button>
             </div>
         </div>
     </div>
